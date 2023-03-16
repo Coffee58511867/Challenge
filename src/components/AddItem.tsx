@@ -57,15 +57,11 @@ export default function AddItem() {
     <div>
       <div>
         <div className="flex flex-col items-center min-h-screen pt-6 sm:justify-center sm:pt-0 bg-gray-50">
-          <div>
-            <a href="/">
-              <h3 className="text-4xl font-bold text-gray-600 mt-8">
-                Add Item to List
-              </h3>
-            </a>
-          </div>
           <div className="w-full px-6 py-4 mt-6 overflow-hidden bg-white shadow-md sm:max-w-md sm:rounded-lg sm:mt-50 ">
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
+            <h3 className="text-4xl font-bold text-gray-600 mt-5 text-center mb-6">
+                Add Item to List
+              </h3>
               <div>
                 <label
                   htmlFor="title"
@@ -124,12 +120,12 @@ export default function AddItem() {
           </div>
           <div>
             {items.map((item: IItem, index) => (
-              <div className="space-y-2 shadow-md mt-6 mb-3 ml-10 mr-10">
+              <div className="space-y-2 shadow-md mt-6 mb-3 ml-8 mr-8">
                 <p className="text-blue-600 text-center">Item : {index + 1}</p>
                 <h3 className="text-l font-semibold text-center">
                   Title : {item.title}
                 </h3>
-                <p className="text-gray-600 text-lg text-center mb-4">
+                <p className="text-gray-600 text-lg text-center">
                   Description : {item.description}
                 </p>
               </div>
