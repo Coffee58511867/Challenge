@@ -1,21 +1,90 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import IItem from "../models/item.type";
 import { useForm } from "react-hook-form";
+import instance from "../api/api";
+import axios from "axios";
 
 export default function AddItem() {
+  const [items, setItems] = useState<IItem[]>([]);
+  const {
+    register,
+    resetField,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<IItem>();
+
+  const onSubmit = async (data: IItem) => {
+    console.log(data);
+    try {
+      const response = await instance.post("/api/v1/items/addItem", data);
+      if (response) {
+        //do something
+        // toast({
+        //   title: "Item created.",
+        //   description: "Item added successfully.",
+        //   status: "success",
+        //   duration: 9000,
+        //   isClosable: true,
+        // });
+        setItems(items.concat(response.data));
+        resetField("title");
+        resetField("description");
+      }
+      if (!response) {
+        // toast({
+        //   title: "Item not created.",
+        //   description: "Item not added. Please try again later.",
+        //   status: "error",
+        //   duration: 9000,
+        //   isClosable: true,
+        // });
+      }
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        // toast({
+        //   title: "Item not created.",
+        //   description: "Item not added. Please try again later.",
+        //   status: "error",
+        //   duration: 9000,
+        //   isClosable: true,
+        // });
+        return error.message;
+      }
+      return "An unexpected error occurred";
+    }
+  };
+
+  useEffect(() => {
+    const controller = new AbortController();
+    let dataFetched = false;
+
+    async function fetchAllItems() {
+      if (!dataFetched) {
+        const response = await instance.get("/api/v1/items");
+        console.log(response.data);
+        setItems(response.data);
+      }
+    }
+    fetchAllItems();
+    return () => {
+      dataFetched = true;
+      controller.abort();
+    };
+  }, []);
   return (
     <div>
       <div>
         <div className="flex flex-col items-center min-h-screen pt-6 sm:justify-center sm:pt-0 bg-gray-50">
           <div>
             <a href="/">
-              <h3 className="text-4xl font-bold text-purple-600">
+              <h3 className="text-4xl font-bold text-gray-600">
                 Add Items to List
               </h3>
             </a>
           </div>
-          <div className="w-full px-6 py-4 mt-6 overflow-hidden bg-white shadow-md sm:max-w-md sm:rounded-lg">
-            <form>
+          <div className="w-full px-6 py-4 mt-6 overflow-hidden bg-white shadow-md sm:max-w-md sm:rounded-lg sm:mt-50 sm:ml-10 sm:mr-10">
+            <form onSubmit={handleSubmit(onSubmit)} noValidate>
               <div>
                 <label
                   htmlFor="title"
@@ -26,10 +95,15 @@ export default function AddItem() {
                 <div className="flex flex-col items-start">
                   <input
                     type="text"
-                    name="title"
                     placeholder="Enter title"
+                    {...register("title", {
+                      required: "Item title is required",
+                    })}
                     className="block w-full h-6 mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   />
+                  {errors?.title && (
+                    <p className="error text-red-600 text-center">{errors.title.message}</p>
+                  )}
                 </div>
               </div>
               <div className="mt-6">
@@ -42,11 +116,15 @@ export default function AddItem() {
                 <div className="flex flex-col items-start">
                   <input
                     type="text"
-                    name="description"
-                   
+                    {...register("description", {
+                      required: "Item Description is required",
+                    })}
                     placeholder="Enter Description"
                     className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   />
+                  {errors?.description && (
+                    <p className="error  text-red-600 text-center">{errors.description.message}</p>
+                  )}
                 </div>
               </div>
               <div className="flex items-center justify-end mt-4">
@@ -59,14 +137,21 @@ export default function AddItem() {
               </div>
             </form>
           </div>
-          <div className="space-y-2 shadow-md">
-            <h3 className="text-2xl font-semibold">
-              React Tailwind Card Title
-            </h3>
-            <p className="text-gray-600 text-lg">
-              react with tailwind css simple card It is a long established fact
-              that a reader will be distracted.
+          <div>
+       
+            {items.map((item: IItem, index) => (
+        <div className="space-y-2 shadow-md mt-6 mb-3 ml-10 mr-10">
+          <p className="text-blue-600 text-center">
+          Item : {index + 1}
             </p>
+          <h3 className="text-l font-semibold text-center">
+          Title : {item.title}
+            </h3>
+            <p className="text-gray-600 text-lg text-center">
+            Description : {item.description}
+            </p>
+        </div>
+      ))}
           </div>
         </div>
       </div>
