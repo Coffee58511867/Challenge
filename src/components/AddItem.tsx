@@ -18,7 +18,7 @@ export default function AddItem() {
     try {
       const response = await instance.post("/api/v1/items/addItem", data);
       if (response) {
-        window.alert("Item has been added Successfully")
+        window.alert("Item has been added Successfully");
         setItems(items.concat(response.data));
         resetField("title");
         resetField("description");
