@@ -10,7 +10,7 @@ export default function AddItem() {
     register,
     resetField,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<IItem>();
 
   const onSubmit = async (data: IItem) => {
@@ -18,37 +18,18 @@ export default function AddItem() {
     try {
       const response = await instance.post("/api/v1/items/addItem", data);
       if (response) {
-        //do something
-        // toast({
-        //   title: "Item created.",
-        //   description: "Item added successfully.",
-        //   status: "success",
-        //   duration: 9000,
-        //   isClosable: true,
-        // });
+        window.alert("Item has been added Successfully")
         setItems(items.concat(response.data));
         resetField("title");
         resetField("description");
       }
       if (!response) {
-        // toast({
-        //   title: "Item not created.",
-        //   description: "Item not added. Please try again later.",
-        //   status: "error",
-        //   duration: 9000,
-        //   isClosable: true,
-        // });
+       window.alert("Item not added");
       }
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        // toast({
-        //   title: "Item not created.",
-        //   description: "Item not added. Please try again later.",
-        //   status: "error",
-        //   duration: 9000,
-        //   isClosable: true,
-        // });
+        window.alert("Item not added please try again later");
         return error.message;
       }
       return "An unexpected error occurred";
@@ -78,12 +59,12 @@ export default function AddItem() {
         <div className="flex flex-col items-center min-h-screen pt-6 sm:justify-center sm:pt-0 bg-gray-50">
           <div>
             <a href="/">
-              <h3 className="text-4xl font-bold text-gray-600">
-                Add Items to List
+              <h3 className="text-4xl font-bold text-gray-600 mt-8">
+                Add Item to List
               </h3>
             </a>
           </div>
-          <div className="w-full px-6 py-4 mt-6 overflow-hidden bg-white shadow-md sm:max-w-md sm:rounded-lg sm:mt-50 sm:ml-10 sm:mr-10">
+          <div className="w-full px-6 py-4 mt-6 overflow-hidden bg-white shadow-md sm:max-w-md sm:rounded-lg sm:mt-50 ">
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
               <div>
                 <label
@@ -99,10 +80,12 @@ export default function AddItem() {
                     {...register("title", {
                       required: "Item title is required",
                     })}
-                    className="block w-full h-6 mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    className="block w-full h-10 mt-1 border border-solid"
                   />
                   {errors?.title && (
-                    <p className="error text-red-600 text-center">{errors.title.message}</p>
+                    <p className="error text-red-600 text-center">
+                      {errors.title.message}
+                    </p>
                   )}
                 </div>
               </div>
@@ -120,38 +103,37 @@ export default function AddItem() {
                       required: "Item Description is required",
                     })}
                     placeholder="Enter Description"
-                    className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    className="block w-full h-10 mt-1 border border-solid"
                   />
                   {errors?.description && (
-                    <p className="error  text-red-600 text-center">{errors.description.message}</p>
+                    <p className="error  text-red-600 text-center">
+                      {errors.description.message}
+                    </p>
                   )}
                 </div>
               </div>
-              <div className="flex items-center justify-end mt-4">
+              <div className="flex items-center mt-4">
                 <button
                   type="submit"
-                  className=" block w-full  items-center px-4 py-2 ml-4 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-gray-900 border border-transparent rounded-md active:bg-gray-900 false"
+                  className=" block w-full  items-center px-4 py-2 ml-4 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-blue-900 border border-transparent rounded-md active:bg-gray-900 false"
                 >
-                  Register
+                  Submit
                 </button>
               </div>
             </form>
           </div>
           <div>
-       
             {items.map((item: IItem, index) => (
-        <div className="space-y-2 shadow-md mt-6 mb-3 ml-10 mr-10">
-          <p className="text-blue-600 text-center">
-          Item : {index + 1}
-            </p>
-          <h3 className="text-l font-semibold text-center">
-          Title : {item.title}
-            </h3>
-            <p className="text-gray-600 text-lg text-center">
-            Description : {item.description}
-            </p>
-        </div>
-      ))}
+              <div className="space-y-2 shadow-md mt-6 mb-3 ml-10 mr-10">
+                <p className="text-blue-600 text-center">Item : {index + 1}</p>
+                <h3 className="text-l font-semibold text-center">
+                  Title : {item.title}
+                </h3>
+                <p className="text-gray-600 text-lg text-center mb-4">
+                  Description : {item.description}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </div>
